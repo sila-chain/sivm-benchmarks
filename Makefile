@@ -62,7 +62,7 @@ ${RETESTETH}:
 	rm -rf ${TMP_DIR}/retesteth
 	git clone --depth 1 -b ${RETESTETH_REF} ${RETESTETH_REPO} ${TMP_DIR}/retesteth
 	cmake -S ${TMP_DIR}/retesteth -B ${TMP_DIR}/retesteth/build -DCMAKE_BUILD_TYPE=Release
-	cmake --build ${TMP_DIR}/retesteth/build --target retesteth -j 4
+	cmake --build ${TMP_DIR}/retesteth/build -j 4
 	mkdir -p $(dir $@)
 	cp ${TMP_DIR}/retesteth/build/retesteth/retesteth $@
 
