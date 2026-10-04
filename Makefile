@@ -10,6 +10,10 @@ GO_SILA_REF := sila/go-sila-v1.17.7-sync-20261001
 RETESTETH_REPO := https://github.com/ethereum/retesteth
 RETESTETH_REF := v0.2.2-merge
 
+# retesteth sources whose built-in "London" fork name is set to SilaLondon for
+# this generation build: the 1559 checks and the chain params fork progression.
+RETESTETH_SILA_FILES := retesteth/session/ToolBackend/ToolChain.cpp retesteth/testStructures/PrepareChainParams.cpp
+
 # Directory for tools
 BIN_DIR := bin
 
@@ -61,6 +65,12 @@ clean:
 ${RETESTETH}:
 	rm -rf ${TMP_DIR}/retesteth
 	git clone --depth 1 -b ${RETESTETH_REF} ${RETESTETH_REPO} ${TMP_DIR}/retesteth
+	cd ${TMP_DIR}/retesteth && for f in ${RETESTETH_SILA_FILES}; do \
+		grep -q '"London"' $$f && sed -i 's/"London"/"SilaLondon"/g' $$f || exit 1; \
+	done
+	cd ${TMP_DIR}/retesteth && git --no-pager diff
+	@echo 'Remaining "London" literals in retesteth (inventory):'
+	-cd ${TMP_DIR}/retesteth && git --no-pager grep -n '"London"' -- retesteth
 	cmake -S ${TMP_DIR}/retesteth -B ${TMP_DIR}/retesteth/build -DCMAKE_BUILD_TYPE=Release
 	cmake --build ${TMP_DIR}/retesteth/build -j 4
 	mkdir -p $(dir $@)

@@ -39,7 +39,7 @@ jobs:
 
       - name: Restore retesteth build
         id: retesteth-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: bin/retesteth
           key: retesteth-${{ runner.os }}-${{ hashFiles('Makefile') }}
@@ -47,6 +47,13 @@ jobs:
       - name: Build retesteth
         if: steps.retesteth-cache.outputs.cache-hit != 'true'
         run: make bin/retesteth
+
+      - name: Save retesteth build
+        if: steps.retesteth-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: bin/retesteth
+          key: retesteth-${{ runner.os }}-${{ hashFiles('Makefile') }}
 
       - name: Generate micro/signextend with the Sila config
         run: |
