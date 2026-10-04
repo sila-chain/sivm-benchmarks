@@ -7,7 +7,7 @@ on:
 
 jobs:
   generate:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -26,7 +26,7 @@ jobs:
           cache: false
 
       - name: Install retesteth build dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ libssl-dev
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libssl-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev
 
       - name: Build sivm
         run: make bin/sivm && bin/sivm --version
