@@ -19,6 +19,10 @@ RETESTETH_SILA_FILES := retesteth/session/ToolBackend/ToolChain.cpp retesteth/te
 # accepted as optional fields and are not read.
 RETESTETH_TOOLRESPONSE := retesteth/testStructures/types/RPC/ToolResponse.cpp
 
+# The t8n receipt schema of retesteth, extended the same way for the
+# effectiveGasPrice and blockNumber receipt fields of sivm (optional, unread).
+RETESTETH_TOOLRESPONSE_RECEIPT := retesteth/testStructures/types/RPC/SubElements/ToolResponseReceipt.cpp
+
 # Directory for tools
 BIN_DIR := bin
 
@@ -76,6 +80,9 @@ ${RETESTETH}:
 	cd ${TMP_DIR}/retesteth && test "$$(grep -c '{"gasUsed",' ${RETESTETH_TOOLRESPONSE})" = 1 && \
 		! grep -q '"currentBaseFee"\|"requests"' ${RETESTETH_TOOLRESPONSE} && \
 		sed -i '/{"gasUsed",/a\        {"currentBaseFee", {{DataType::String, DataType::Null}, jsonField::Optional}},\n        {"requests", {{DataType::String, DataType::Array, DataType::Null}, jsonField::Optional}},' ${RETESTETH_TOOLRESPONSE}
+	cd ${TMP_DIR}/retesteth && test "$$(grep -c '{"gasUsed",' ${RETESTETH_TOOLRESPONSE_RECEIPT})" = 1 && \
+		! grep -q '"effectiveGasPrice"\|"blockNumber"' ${RETESTETH_TOOLRESPONSE_RECEIPT} && \
+		sed -i '/{"gasUsed",/a\        {"effectiveGasPrice", {{DataType::Null}, jsonField::Optional}},\n        {"blockNumber", {{DataType::String}, jsonField::Optional}},' ${RETESTETH_TOOLRESPONSE_RECEIPT}
 	cd ${TMP_DIR}/retesteth && git --no-pager diff
 	@echo 'Remaining "London" literals in retesteth (inventory):'
 	-cd ${TMP_DIR}/retesteth && git --no-pager grep -n '"London"' -- retesteth
