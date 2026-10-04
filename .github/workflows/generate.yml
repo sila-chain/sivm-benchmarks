@@ -63,6 +63,9 @@ jobs:
           ./sivmbench.py build-source src/micro/signextend.yml -o tmp/micro/signextendFiller.yml
           retesteth -t GeneralStateTests -- --datadir retesteth-config --testpath . --filltests --forceupdate --clients t8ntool --testfile tmp/micro/signextendFiller.yml --outfile tmp/micro/signextend.json 2>&1 | tee tmp/micro.log
           if grep -q 'Error' tmp/micro.log; then echo "retesteth reported errors"; exit 1; fi
+          if grep -q 'Unexpected field' tmp/micro.log; then echo "unexpected t8n response field"; exit 1; fi
+          if grep -q 'not found' tmp/micro.log; then echo "fork not found"; exit 1; fi
+          grep -Eq 'Total Tests Run: [1-9]' tmp/micro.log
           python - <<'PY'
           import json
           d = json.load(open("tmp/micro/signextend.json"))

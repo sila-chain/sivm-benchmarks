@@ -14,6 +14,11 @@ RETESTETH_REF := v0.2.2-merge
 # this generation build: the 1559 checks and the chain params fork progression.
 RETESTETH_SILA_FILES := retesteth/session/ToolBackend/ToolChain.cpp retesteth/testStructures/PrepareChainParams.cpp
 
+# The t8n response schema of retesteth, extended for this generation build to
+# let the current sivm t8n response through: currentBaseFee and requests are
+# accepted as optional fields and are not read.
+RETESTETH_TOOLRESPONSE := retesteth/testStructures/types/RPC/ToolResponse.cpp
+
 # Directory for tools
 BIN_DIR := bin
 
@@ -68,6 +73,9 @@ ${RETESTETH}:
 	cd ${TMP_DIR}/retesteth && for f in ${RETESTETH_SILA_FILES}; do \
 		grep -q '"London"' $$f && sed -i 's/"London"/"SilaLondon"/g' $$f || exit 1; \
 	done
+	cd ${TMP_DIR}/retesteth && test "$$(grep -c '{"gasUsed",' ${RETESTETH_TOOLRESPONSE})" = 1 && \
+		! grep -q '"currentBaseFee"\|"requests"' ${RETESTETH_TOOLRESPONSE} && \
+		sed -i '/{"gasUsed",/a\        {"currentBaseFee", {{DataType::String, DataType::Null}, jsonField::Optional}},\n        {"requests", {{DataType::String, DataType::Array, DataType::Null}, jsonField::Optional}},' ${RETESTETH_TOOLRESPONSE}
 	cd ${TMP_DIR}/retesteth && git --no-pager diff
 	@echo 'Remaining "London" literals in retesteth (inventory):'
 	-cd ${TMP_DIR}/retesteth && git --no-pager grep -n '"London"' -- retesteth
