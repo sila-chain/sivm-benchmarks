@@ -1,0 +1,14 @@
+{
+    "name" : "Sila Sivm on StateTool",
+    "socketType" : "tranition-tool",
+    "socketAddress" : "start.sh",
+    "checkLogsHash" : true,
+    "chainID" : 1,
+    "forks" : [
+        "SilaLondon"
+    ],
+    "additionalForks" : [
+    ],
+    "exceptions" : {
+    }
+}
