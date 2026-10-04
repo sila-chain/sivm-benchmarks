@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# EVM Benchmarks project
+# Sivm Benchmarks project
 # Copyright 2021 The EVM Benchmarks Authors.
 # SPDX-License-Identifier: Apache-2.0
 
@@ -13,7 +13,7 @@ ORIGIN = '0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b'
 ORIGIN_PRIV_KEY = '0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8'
 COINBASE = ORIGIN
 
-NETWORK = 'London'
+NETWORK = 'SilaLondon'
 
 
 # Decode DRY text.

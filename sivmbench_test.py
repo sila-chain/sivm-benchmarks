@@ -1,8 +1,8 @@
-# EVM Benchmarks project
+# Sivm Benchmarks project
 # Copyright 2021 The EVM Benchmarks Authors.
 # SPDX-License-Identifier: Apache-2.0
 
-from evmbench import *
+from sivmbench import *
 
 
 def test_dry_decode():

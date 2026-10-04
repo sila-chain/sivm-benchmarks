@@ -1,0 +1,61 @@
+name: generate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Test sivmbench.py
+        run: |
+          pip install -r requirements.txt
+          python sivmbench_test.py
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.x'
+          cache: false
+
+      - name: Install retesteth build dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libssl-dev
+
+      - name: Build sivm
+        run: make bin/sivm && bin/sivm --version
+
+      - name: Build retesteth
+        run: make bin/retesteth && bin/retesteth --version
+
+      - name: Show retesteth default t8ntool config
+        if: ${{ hashFiles('retesteth-config/**') == '' }}
+        run: |
+          mkdir -p tmp/micro
+          ./sivmbench.py build-source src/micro/signextend.yml -o tmp/micro/signextendFiller.yml
+          bin/retesteth -t GeneralStateTests -- --datadir tmp/default-config --testpath . --filltests --clients t8ntool --testfile tmp/micro/signextendFiller.yml --outfile tmp/out.json || true
+          find tmp/default-config -type f | sort
+          for f in $(find tmp/default-config -type f | sort); do echo "=== $f"; cat "$f"; echo; done
+
+      - name: Generate benchmarks
+        if: ${{ hashFiles('retesteth-config/**') != '' }}
+        run: |
+          make clean
+          make
+          git status --short
+          git diff --stat
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: generated
+          path: |
+            benchmarks/
+            tmp/
+          if-no-files-found: ignore

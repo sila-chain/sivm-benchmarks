@@ -1,12 +1,14 @@
-# EVM Benchmarks project
+# Sivm Benchmarks project
 # Copyright 2021 The EVM Benchmarks Authors.
 # SPDX-License-Identifier: Apache-2.0
 
-# Geth evm tool download URL
-EVM_DOWNLOAD_URL := https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.10.25-69568c55.tar.gz
+# go-sila source of the sivm tool
+GO_SILA_REPO := https://github.com/sila-chain/go-sila
+GO_SILA_REF := sila/go-sila-v1.17.7-sync-20261001
 
-# Retesteth tool download URL
-RETESTETH_DOWNLOAD_URL := http://retesteth.ethdevops.io/release/0.2.2-merge/ubuntu-18.04.3/retesteth-0.2.2-merge-ubuntu-18.04.3
+# Retesteth source
+RETESTETH_REPO := https://github.com/ethereum/retesteth
+RETESTETH_REF := v0.2.2-merge
 
 # Directory for tools
 BIN_DIR := bin
@@ -20,13 +22,13 @@ OUT_DIR := benchmarks
 # Place for intermediary files
 TMP_DIR := tmp
 
-# Directory for temporary retesteth config.
-RETESTETH_CONFIG_DIR := ${TMP_DIR}/config
+# Directory with the retesteth config (t8ntool client running sivm).
+RETESTETH_CONFIG_DIR := retesteth-config
 
-# Geth evm tool for t8n processing, can be downloaded with `make bin/evm`.
-EVM := ${BIN_DIR}/evm
+# go-sila sivm tool for t8n processing, can be built with `make bin/sivm`.
+SIVM := ${BIN_DIR}/sivm
 
-# retesteth tool, can be downloaded with `make bin/retesteth`.
+# retesteth tool, can be built with `make bin/retesteth`.
 RETESTETH := ${BIN_DIR}/retesteth
 
 
@@ -42,9 +44,9 @@ all: ${outputs}
 # Generate the State Test fillers out of benchmark source files.
 ${TMP_DIR}/%Filler.yml: ${SRC_DIR}/%.yml
 	mkdir -p $(dir $@)
-	./evmbench.py build-source $< -o $@
+	./sivmbench.py build-source $< -o $@
 
-# Add local bin dir to PATH so the evm tool can be found by retesteth
+# Add local bin dir to PATH so the sivm tool can be found by retesteth
 export PATH := $(BIN_DIR):$(PATH)
 
 # Generate the State Tests for benchmarks using previously generated fillers.
@@ -55,16 +57,17 @@ clean:
 	rm -rf ${TMP_DIR}
 	find ${OUT_DIR} -name '*.json' -delete
 
-# Download the retesteth tool.
+# Build the retesteth tool from source.
 ${RETESTETH}:
+	rm -rf ${TMP_DIR}/retesteth
+	git clone --depth 1 -b ${RETESTETH_REF} ${RETESTETH_REPO} ${TMP_DIR}/retesteth
+	cmake -S ${TMP_DIR}/retesteth -B ${TMP_DIR}/retesteth/build -DCMAKE_BUILD_TYPE=Release
+	cmake --build ${TMP_DIR}/retesteth/build --target retesteth -j 4
 	mkdir -p $(dir $@)
-	curl ${RETESTETH_DOWNLOAD_URL} > $@
-	chmod +x $@
+	cp ${TMP_DIR}/retesteth/build/retesteth/retesteth $@
 
-# Download and extract geth evm tool.
-${EVM}:
-	mkdir -p ${TMP_DIR}
-	curl ${EVM_DOWNLOAD_URL} > ${TMP_DIR}/geth-alltools.tar.gz
-	tar -xz -f ${TMP_DIR}/geth-alltools.tar.gz -C ${TMP_DIR}
-	mkdir -p $(dir $@)
-	mv ${TMP_DIR}/geth-alltools-*/evm $@
+# Build the go-sila sivm tool from source.
+${SIVM}:
+	rm -rf ${TMP_DIR}/go-sila
+	git clone --depth 1 -b ${GO_SILA_REF} ${GO_SILA_REPO} ${TMP_DIR}/go-sila
+	cd ${TMP_DIR}/go-sila && go build -o $(abspath $@) ./cmd/sivm

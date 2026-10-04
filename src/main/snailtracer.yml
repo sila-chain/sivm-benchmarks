@@ -1,4 +1,4 @@
-# Executes the Benchmark() function from SnailTracer (EVM implementation of
+# Executes the Benchmark() function from SnailTracer (Sivm implementation of
 # global illumination path tracer).
 # Original implementation: https://github.com/karalabe/snailtracer
 # Modernized version (newer compiler, no storage usage): https://github.com/axic/snailtracer
