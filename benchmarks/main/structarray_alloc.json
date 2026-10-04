@@ -2,16 +2,16 @@
     "structarray_alloc" : {
         "_info" : {
             "comment" : "",
-            "filling-rpc-server" : "evm version 1.10.25-stable-69568c55",
-            "filling-tool-version" : "retesteth-0.2.2-testinfo+commit.766b4629.Linux.g++",
-            "generatedTestHash" : "0b04ffa1b5bf9654d39d45e4ffbea211b45543d991f4d89a8c7b504507934760",
+            "filling-rpc-server" : "sivm version 1.17.7-stable-06047c8d",
+            "filling-tool-version" : "retesteth-0.2.2-testinfo+commit.2286dc12.Linux.g++",
+            "generatedTestHash" : "6b745b574bf42a24d3ea92de3e22d77fad5d7864ef45f4a003e65b4fbba54cbf",
             "labels" : {
                 "0" : "nfts_rank"
             },
             "lllcversion" : "Error getting LLLC Version",
             "solidity" : "Error getting solc Version",
             "source" : "tmp/main/structarray_allocFiller.yml",
-            "sourceHash" : "91cfd0882232416ff6d23079ff210106c9835bca3ffd62319baf7acc26c9bdd2"
+            "sourceHash" : "c414b32841de25bac05365f30fcaf915f0097d385b6a43783711e661fb53a50b"
         },
         "env" : {
             "currentBaseFee" : "0x01",
@@ -24,7 +24,7 @@
             "previousHash" : "0x5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6"
         },
         "post" : {
-            "London" : [
+            "SilaLondon" : [
                 {
                     "hash" : "0x2eda8271e8ba1666b769f3a58a154e129a1315cad1da1aef4a2f43002b0fe1b2",
                     "indexes" : {
